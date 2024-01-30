@@ -1,11 +1,14 @@
 # Proj2_ECS34
-Student: Keanu Chau (920727641)
+Student 1: Keanu Chau (920727641)
 
-Partner: Christopher Lee ()
+Student 2: Christopher Lee (920724149)
 
 ## Project Status
-
+* Add StringUtils files from previous work
+* Add /teststrdatasource and /teststrdatasink to my makefile
+* Create XML files, DSV files, and docs directory with documentation files
 * 
+
 
 
 ## Known Issues
