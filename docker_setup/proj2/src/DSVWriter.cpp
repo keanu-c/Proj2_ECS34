@@ -19,6 +19,6 @@ CDSWriter::~CDSWriter() {
 
 }
 
-bool CDSWriter::WRiteRow(const std::vector<std::string> &row) {
+bool CDSWriter::WriteRow(const std::vector<std::string> &row) {
     return DImplementation->WriteRow(row);
 }
