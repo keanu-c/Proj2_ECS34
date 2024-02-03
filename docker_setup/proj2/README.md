@@ -8,11 +8,13 @@ Student 2: Christopher Lee (920724149)
 * Add /teststrdatasource and /teststrdatasink to my makefile
 * Create XML files, DSV files, and docs directory with documentation files
 * Create skeleton functions for XML and DSV files
+* Fix EditDistance() in StringUtils.cpp
+* Write tests for DSV and XML classes
 
 
 
 ## Known Issues
-
+1. 
 ## Code References
 * 
 
