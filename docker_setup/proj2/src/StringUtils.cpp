@@ -10,7 +10,7 @@ std::string Slice(const std::string &str, ssize_t start, ssize_t end) noexcept{
         start = str.length() + start;
     } else if (end < 0) {
         end = str.length() + end;
-    } else if (start > str.length()) {
+    } else if (start > static_cast<ssize_t>(str.length())) {
         return "";
     }
     return str.substr(start, str.length()-start);
@@ -184,7 +184,7 @@ std::string ExpandTabs(const std::string &str, int tabsize) noexcept{
 
 //[Wagner-Fischer algorithm](https://en.wikipedia.org/wiki/Wagner%E2%80%93Fischer_algorithm)
 //[guilhermeagostinelli Levenshtein implementation](https://github.com/guilhermeagostinelli/levenshtein/blob/master/levenshtein.cpp)
-int EditDistance(const std::string &left, const std::string &right, bool ignorecase) noexcept{
+/*int EditDistance(const std::string &left, const std::string &right, bool ignorecase) noexcept{
     // Deals with case-insensitive
     std::string copy1, copy2;
     if (ignorecase == true) {
@@ -223,6 +223,41 @@ int EditDistance(const std::string &left, const std::string &right, bool ignorec
         }
     }
     // return last position of matrix that contains the 'distance'
+    return matrix[size1][size2];
+}
+*/
+// From partner
+int EditDistance(const std::string &left, const std::string &right, bool ignorecase) noexcept {
+    std::string copy1, copy2;
+    if (ignorecase) {    // If ignorecase is true, convert both strings to lowercase
+        copy1 = StringUtils::Lower(left);
+        copy2 = StringUtils::Lower(right);
+    } else {
+        copy1 = left;
+        copy2 = right;
+    }
+    const size_t size1 = copy1.size();    // Get the sizes of the copied strings
+    const size_t size2 = copy2.size();
+    int matrix[size1 + 1][size2 + 1];    // Create a matrix to store the edit distance calculation
+
+    if (size1 == 0)    // If one of the strings is empty, return the size of the other string
+        return int(size2);
+    if (size2 == 0)
+        return int(size1);
+
+    for (size_t i = 0; i <= size1; ++i) {    // Initialize the first row and column of the matrix
+        matrix[i][0] = int(i);
+    }
+    for (size_t j = 0; j <= size2; ++j) {
+        matrix[0][j] = int(j);
+    }
+
+    for (size_t i = 1; i <= size1; ++i) {
+        for (size_t j = 1; j <= size2; ++j) {
+            int substitutionCost = (copy1[i - 1] == copy2[j - 1]) ? 0 : 1;            // Calculate the substitution cost
+            matrix[i][j] = std::min({matrix[i - 1][j] + 1, matrix[i][j - 1] + 1, matrix[i - 1][j - 1] + substitutionCost});
+        }
+    }
     return matrix[size1][size2];
 }
 
