@@ -11,6 +11,8 @@ Student 2: Christopher Lee (920724149)
 * Fix EditDistance() in StringUtils.cpp
 * Write tests for DSV and XML classes
 * Edit makefile to include /testdsv and /testxml processes
+* Fix makefile to include StringDataSource.o and StringDataSink.o to link with the /testxml and /testdsv
+* Fix XML test by deleting whitespace in test names
 
 
 

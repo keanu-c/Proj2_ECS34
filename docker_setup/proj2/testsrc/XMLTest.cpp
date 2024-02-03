@@ -6,7 +6,7 @@
 
 // Make sure to check for complete elements, elements with attributes, multiple line xml's 
 // XML READER ------------------------------------------------------------------------------------------------------------------------------------
-TEST(XMLReaderTest, Simple XML) {
+TEST(XMLReaderTest, SimpleXML) {
     auto Source = std::make_shared<CStringDataSource>("<heading>Reminder</heading>");
     CXMLReader Reader(Source);
     SXMLEntity Entity;
@@ -25,7 +25,7 @@ TEST(XMLReaderTest, Simple XML) {
     EXPECT_FALSE(Reader.ReadEntity(Entity));
 }
 
-TEST(XMLReaderTest, Simple XML with attribute) {
+TEST(XMLReaderTest, SimpleXMLWithAttribute) {
     auto Source = std::make_shared<CStringDataSource>("<heading attr=\"Hello World\">Reminder</heading>");
     CXMLReader Reader(Source);
     SXMLEntity Entity;
@@ -44,13 +44,13 @@ TEST(XMLReaderTest, Simple XML with attribute) {
     EXPECT_FALSE(Reader.ReadEntity(Entity));
 }
 
-TEST(XMLReaderTest, Empty XML) {
+TEST(XMLReaderTest, EmptyXML) {
     auto Source = std::make_shared<CStringDataSource>("");
     CXMLReader Reader(Source);
     EXPECT_TRUE(Reader.End());
 }
 
-TEST(XMLReaderTest, MultipleLine XML) {
+TEST(XMLReaderTest, MultipleLineXML) {
     auto Source = std::make_shared<CStringDataSource>("<note>\n  <to attr=\"Hello World\"Tove</to>\n  <from>Jani</from>\n  <heading>Reminder</heading>\n  <body>Don't forget me this weekend!</body>\n  </note>");
     CXMLReader Reader(Source);
     SXMLEntity Entity;
@@ -86,7 +86,7 @@ TEST(XMLReaderTest, MultipleLine XML) {
     EXPECT_EQ(Entity.DType, SXMLEntity::EType::EndElement);
 }
 
-TEST(XMLReaderTest, Complex Attribute) {
+TEST(XMLReaderTest, ComplexAttribute) {
     auto Source = std::make_shared<CStringDataSource>("<from gender=\"female & asexual\">Jani</from>");
     CXMLReader Reader(Source);
     SXMLEntity Entity;
@@ -110,7 +110,7 @@ TEST(XMLWriterTest, SimpleTest) {
     
 }
 
-TEST(XMLWriterTest, Simple XML with attribute) {
+TEST(XMLWriterTest, SimpleXMLWithAttribute) {
     auto OutputStream = std::make_shared<CStringDataSink>();
     CXMLWriter Writer(OutputStream);
 
@@ -120,7 +120,7 @@ TEST(XMLWriterTest, Simple XML with attribute) {
     EXPECT_EQ(OutputStream->String(), "<hello attr=\"Hello <&> World\"></hello>");
 }
 
-TEST(XMLWriterTest, MultipleElement XML) {
+TEST(XMLWriterTest, MultipleElementXML) {
     auto OutputStream = std::make_shared<CStringDataSink>();
     CXMLWriter Writer(OutputStream);
 
@@ -132,7 +132,7 @@ TEST(XMLWriterTest, MultipleElement XML) {
     EXPECT_EQ(OutputStream->String(), "<note><hello attr=\"Hello <&> World\"></hello></note>");
 }
 
-TEST(XMLWriterTest, Newline XML) {
+TEST(XMLWriterTest, NewlineXML) {
     auto OutputStream = std::make_shared<CStringDataSink>();
     CXMLWriter Writer(OutputStream);
     // HOW DO I ADD NEWLINE
