@@ -10,11 +10,13 @@ Student 2: Christopher Lee (920724149)
 * Create skeleton functions for XML and DSV files
 * Fix EditDistance() in StringUtils.cpp
 * Write tests for DSV and XML classes
+* Edit makefile to include /testdsv and /testxml processes
 
 
 
 ## Known Issues
-1. 
+1. Makefile issue
+Multiple undefined references when trying to run "make" in the terminal. Probably an issue with not linking the files or libraries correctly so that the test cpp files know where some classes are. 
 ## Code References
 * 
 
