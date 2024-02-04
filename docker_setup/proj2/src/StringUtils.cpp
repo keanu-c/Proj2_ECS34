@@ -119,7 +119,7 @@ std::string RJust(const std::string &str, int width, char fill) noexcept{
 }
 
 std::string Replace(const std::string &str, const std::string &old, const std::string &rep) noexcept{
-
+    /*
     auto copy = str;
     size_t found = copy.find(old); 
     while (found != std::string::npos) {
@@ -128,6 +128,18 @@ std::string Replace(const std::string &str, const std::string &old, const std::s
         found = copy.find(old);
     }
     return copy;
+    */
+
+    // Partner's Replace() function
+    std::string result = str;
+    size_t found = result.find(old);    // Find the first occurrence of the substring to be replaced
+
+    while (found != std::string::npos) {    // Loop until no more occurrences of the substring are found
+        result.replace(found, old.length(), rep);        // Replace the found substring with the replacement string
+        found = result.find(old, found + rep.length());        // starting the search from the position after the replacement
+    }
+
+    return result;
 }
 
 std::vector< std::string > Split(const std::string &str, const std::string &splt) noexcept{
