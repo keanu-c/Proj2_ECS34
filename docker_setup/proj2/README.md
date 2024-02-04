@@ -14,8 +14,7 @@ Student 2: Christopher Lee (920724149)
 * Fix makefile to include StringDataSource.o and StringDataSink.o to link with the /testxml and /testdsv
 * Fix XML test by deleting whitespace in test names
 * Implement CDSVWriter class, Used Christopher Lee's StringUtils::Replace()
-* 
-
+* Implement CDSVReader class
 
 
 ## Known Issues
@@ -107,13 +106,32 @@ String: A
 ```
 Replace 'A' with your desired character, and the code will work for any char value.
 ### Changes 2
-In the CDSVWriter class I needed to convert "char Delimiter" into a std::string for the Replace function. So I did: [std::string(1,Delimiter)].
+In the CDSVWriter class I needed to convert "char Delimiter" into a std::string for the Replace function. So I did: `std::string(1,Delimiter)`.
 
 ### Prompt 3
-
+What does peek do in this class?: (included contents of [StringDataSource.h] and [StringDataSource.cpp])
 ### Response 3
+The Peek() function in the context of input streams, such as CDataSource, allows you to look at the next character in the stream without actually consuming it. It's like taking a sneak peek at the next character without advancing the position in the stream.
+
+Here's how Peek() typically works:
+
+It examines the next character in the stream.
+It returns true if there is a character available to read and stores that character in the variable passed as an argument.
+If there are no characters available (for example, if the end of the stream has been reached), it returns false without modifying the argument.
+Peek() can be used to check if the data source has reached its end by attempting to peek the next character. If Peek() returns false, it indicates that there are no more characters left to read from the data source, implying that the end of the data source has been reached.
 
 ### Changes 3
+Implemented peek() into the CDSVReader End() function:
+```cpp
+bool End() const {
+    char info;
+    if (!DDatasource->Peek(info)) {
+    return true;
+    }  else {
+    return false;
+    }   
+}
+```
 
 ### Prompt 4
 
