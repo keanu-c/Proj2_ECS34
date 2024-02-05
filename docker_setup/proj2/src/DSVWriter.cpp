@@ -46,8 +46,9 @@ struct CDSVWriter::SImplementation {
             // Find every double quote, newline, or delimiter in string and quote it with double quotes
             currentString = StringUtils::Replace(currentString, "\"", "\"\"");
             currentString = StringUtils::Replace(currentString, "\n", "\"\n\"");
+            // Used AI for std::string(1,Delimiter)
             currentString = StringUtils::Replace(currentString, std::string(1,Delimiter), '\"' + std::string(1, Delimiter) + '\"');
-            
+
             // Quote all strings and then write to DataSink
             if (Quoteall) {
                 std::vector<char> String = StringToVectOfChar(currentString);

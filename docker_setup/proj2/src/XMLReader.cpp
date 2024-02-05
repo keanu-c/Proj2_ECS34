@@ -26,11 +26,26 @@ struct CXMLReader::SImplementation {
     void EndElementHandler(const std::string &name) {
         SXMLEntity TempEntity;
         TempEntity.DNameData = name;
-        TempEntity.DType = SXMLEntity::EType::EndElement; // has no attributes so no need for for loop
-
+        TempEntity.DType = SXMLEntity::EType::EndElement; // has no attributes so no need for a for loop
+        DEntityQueue.push(TempEntity);
     }
     void CharacterElementHandler(const std::string &cdata) {
-        // might want to update the back entity to see if it is a character data 
+        /*
+        SXMLEntity TempEntity;
+        TempEntity.DNameData = cdata;
+        TempEntity.DType = SXMLEntity::EType::CharData; // has no attributes so no need for a for loop
+        DEntityQueue.push(TempEntity);
+        */
+        // might want to update the back entity to see if it is a character data
+        if (!DEntityQueue.empty() && DEntityQueue.back().DType == SXMLEntity::EType::CharData) {
+            // Update the back entity if needed
+            DEntityQueue.back().DNameData += cdata;
+        } else {
+            SXMLEntity TempEntity;
+            TempEntity.DNameData = cdata;
+            TempEntity.DType = SXMLEntity::EType::CharData; // has no attributes so no need for a for loop
+            DEntityQueue.push(TempEntity);
+        }
     }
     
     
@@ -64,7 +79,7 @@ struct CXMLReader::SImplementation {
         XML_SetUserData(DXMLParser, this);
     };
     bool End() const {
-
+            return true;
     };
     bool ReadEntity(SXMLEntity &entity, bool skipcdata = false) {
         // Read from the src
@@ -72,11 +87,13 @@ struct CXMLReader::SImplementation {
         // Return entity
         std::vector<char> DataBuffer;
         while(DEntityQueue.empty()) {
-            if (DDataSource->Read(DataBuffer, 256)) {
-                XML_Parse(DXMLParser, DataBuffer.data(), DataBuffer.size(), DataBuffer.size() < 256);
+            if (DDataSource->Read(DataBuffer, 512)) {
+                XML_Parse(DXMLParser, DataBuffer.data(), DataBuffer.size(), DataBuffer.size() < 512);
             }
             else {
                 XML_Parse(DXMLParser, DataBuffer.data(), 0, true);
+                //
+                break;
             }
         }
         if(DEntityQueue.empty()) {

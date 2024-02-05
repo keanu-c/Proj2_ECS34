@@ -51,7 +51,7 @@ TEST(XMLReaderTest, EmptyXML) {
 }
 
 TEST(XMLReaderTest, MultipleLineXML) {
-    auto Source = std::make_shared<CStringDataSource>("<note>\n  <to attr=\"Hello World\"Tove</to>\n  <from>Jani</from>\n  <heading>Reminder</heading>\n  <body>Don't forget me this weekend!</body>\n  </note>");
+    auto Source = std::make_shared<CStringDataSource>("<note>\n  <to attr=\"Hello World\">Tove</to>\n  <from>Jani</from>\n  <heading>Reminder</heading>\n  <body>Don't forget me this weekend!</body>\n  </note>");
     CXMLReader Reader(Source);
     SXMLEntity Entity;
     EXPECT_TRUE(Reader.ReadEntity(Entity));
@@ -117,7 +117,7 @@ TEST(XMLWriterTest, SimpleXMLWithAttribute) {
     EXPECT_TRUE(Writer.WriteEntity({SXMLEntity::EType::StartElement, "hello", {{"attr","Hello <&> World"}}}));
     EXPECT_TRUE(Writer.WriteEntity({SXMLEntity::EType::EndElement, "hello", {}}));
 
-    EXPECT_EQ(OutputStream->String(), "<hello attr=\"Hello <&> World\"></hello>");
+    EXPECT_EQ(OutputStream->String(), "<hello attr=\"Hello &lt;&amp;&gt; World\"></hello>");
 }
 
 TEST(XMLWriterTest, MultipleElementXML) {
@@ -129,18 +129,57 @@ TEST(XMLWriterTest, MultipleElementXML) {
     EXPECT_TRUE(Writer.WriteEntity({SXMLEntity::EType::EndElement, "hello", {}}));
     EXPECT_TRUE(Writer.WriteEntity({SXMLEntity::EType::EndElement, "note", {}}));
 
-    EXPECT_EQ(OutputStream->String(), "<note><hello attr=\"Hello <&> World\"></hello></note>");
+    EXPECT_EQ(OutputStream->String(), "<note><hello attr=\"Hello &lt;&amp;&gt; World\"></hello></note>");
 }
 
-TEST(XMLWriterTest, NewlineXML) {
+TEST(XMLWriterTest, MultipleElementXML2) {
     auto OutputStream = std::make_shared<CStringDataSink>();
     CXMLWriter Writer(OutputStream);
-    // HOW DO I ADD NEWLINE
-    EXPECT_TRUE(Writer.WriteEntity({SXMLEntity::EType::StartElement, "note", {}}));
-    EXPECT_TRUE(Writer.WriteEntity({SXMLEntity::EType::StartElement, "hello", {{"attr","Hello <&> World"}}}));
-    EXPECT_TRUE(Writer.WriteEntity({SXMLEntity::EType::EndElement, "hello", {}}));
-    EXPECT_TRUE(Writer.WriteEntity({SXMLEntity::EType::EndElement, "note", {}}));
 
-    EXPECT_EQ(OutputStream->String(), "<note>\n  <hello attr=\"Hello <&> World\"></hello>\n</note>");
+    EXPECT_TRUE(Writer.WriteEntity({SXMLEntity::EType::StartElement, "p", {}}));
+    EXPECT_TRUE(Writer.WriteEntity({SXMLEntity::EType::CharData, "Some text ", {}}));
+    EXPECT_TRUE(Writer.WriteEntity({SXMLEntity::EType::StartElement, "b", {}}));
+    EXPECT_TRUE(Writer.WriteEntity({SXMLEntity::EType::CharData, "bolded text", {}}));
+    EXPECT_TRUE(Writer.WriteEntity({SXMLEntity::EType::EndElement, "b", {}}));
+    EXPECT_TRUE(Writer.WriteEntity({SXMLEntity::EType::CharData, " some other text", {}}));
+    EXPECT_TRUE(Writer.WriteEntity({SXMLEntity::EType::EndElement, "p", {}}));
+
+    EXPECT_EQ(OutputStream->String(), "<p>Some text <b>bolded text</b> some other text</p>");
 }
 
+TEST(XMLWriterTest, MultipleElementSpecialCharactersXML) {
+    auto OutputStream = std::make_shared<CStringDataSink>();
+    CXMLWriter Writer(OutputStream);
+
+    EXPECT_TRUE(Writer.WriteEntity({SXMLEntity::EType::StartElement, "note&", {}}));
+    EXPECT_TRUE(Writer.WriteEntity({SXMLEntity::EType::StartElement, "hello>", {{"attr","Hello <&> World"}}}));
+    EXPECT_TRUE(Writer.WriteEntity({SXMLEntity::EType::EndElement, "he\"llo", {}}));
+    EXPECT_TRUE(Writer.WriteEntity({SXMLEntity::EType::EndElement, "note", {}}));
+
+    EXPECT_EQ(OutputStream->String(), "<note&amp;><hello&gt; attr=\"Hello &lt;&amp;&gt; World\"></he&quot;llo></note>");
+}
+
+TEST(XMLWriterTest, FlushTest) {
+    auto OutputStream = std::make_shared<CStringDataSink>();
+    CXMLWriter Writer(OutputStream);
+
+    EXPECT_TRUE(Writer.WriteEntity({SXMLEntity::EType::StartElement, "hello", {}}));
+    EXPECT_TRUE(Writer.WriteEntity({SXMLEntity::EType::CharData, "world", {}}));
+    EXPECT_TRUE(Writer.Flush());
+
+    EXPECT_EQ(OutputStream->String(), "<hello>world</hello>");
+}
+
+TEST(XMLWriterTest, FlushTest2) {
+    auto OutputStream = std::make_shared<CStringDataSink>();
+    CXMLWriter Writer(OutputStream);
+
+    EXPECT_TRUE(Writer.WriteEntity({SXMLEntity::EType::StartElement, "hello", {}}));
+    EXPECT_TRUE(Writer.WriteEntity({SXMLEntity::EType::CharData, "world", {}}));
+    EXPECT_TRUE(Writer.WriteEntity({SXMLEntity::EType::StartElement, "bye", {}}));
+    EXPECT_TRUE(Writer.WriteEntity({SXMLEntity::EType::StartElement, "yes", {}}));
+    EXPECT_TRUE(Writer.WriteEntity({SXMLEntity::EType::CharData, "no", {}}));
+    EXPECT_TRUE(Writer.Flush());
+
+    EXPECT_EQ(OutputStream->String(), "<hello>world<bye><yes>no</yes></bye></hello>");
+}
