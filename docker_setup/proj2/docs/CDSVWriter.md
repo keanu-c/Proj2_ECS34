@@ -26,7 +26,7 @@ class CDSVWriter{
 ```
 
 ## Method
-`bool WriteRow(const std::vector<std::string> &row)`: combines a vector of strings using a delimiter and then writes a std::vector<char> to CDataSink::Write() which turns it into a string, returns true if successful. 
+`bool WriteRow(const std::vector<std::string> &row)`: combines a vector of strings using a delimiter all into one string.
 
 ### Parameters
 `(const std::vector<std::string> &row)`: vector of strings to be combined into a string separated by a delimiter.
