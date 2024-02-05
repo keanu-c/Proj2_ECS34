@@ -30,13 +30,8 @@ struct CXMLReader::SImplementation {
         DEntityQueue.push(TempEntity);
     }
     void CharacterElementHandler(const std::string &cdata) {
-        /*
-        SXMLEntity TempEntity;
-        TempEntity.DNameData = cdata;
-        TempEntity.DType = SXMLEntity::EType::CharData; // has no attributes so no need for a for loop
-        DEntityQueue.push(TempEntity);
-        */
         // might want to update the back entity to see if it is a character data
+        // CHATGPT
         if (!DEntityQueue.empty() && DEntityQueue.back().DType == SXMLEntity::EType::CharData) {
             // Update the back entity if needed
             DEntityQueue.back().DNameData += cdata;
@@ -79,7 +74,11 @@ struct CXMLReader::SImplementation {
         XML_SetUserData(DXMLParser, this);
     };
     bool End() const {
+        if(DEntityQueue.empty() && DDataSource->End()) {
             return true;
+        } else {
+            return false;
+        }
     };
     bool ReadEntity(SXMLEntity &entity, bool skipcdata = false) {
         // Read from the src
@@ -98,6 +97,12 @@ struct CXMLReader::SImplementation {
         }
         if(DEntityQueue.empty()) {
             return false;
+        }
+        // Skip CharData
+        if (skipcdata) {
+            if (DEntityQueue.front().DType == SXMLEntity::EType::CharData) {
+                DEntityQueue.pop();
+            }
         }
         entity = DEntityQueue.front();
         DEntityQueue.pop();

@@ -50,13 +50,18 @@ TEST(XMLReaderTest, EmptyXML) {
     EXPECT_TRUE(Reader.End());
 }
 
-TEST(XMLReaderTest, MultipleLineXML) {
-    auto Source = std::make_shared<CStringDataSource>("<note>\n  <to attr=\"Hello World\">Tove</to>\n  <from>Jani</from>\n  <heading>Reminder</heading>\n  <body>Don't forget me this weekend!</body>\n  </note>");
+TEST(XMLReaderTest, MultipleLineXML) {                
+    auto Source = std::make_shared<CStringDataSource>("<note>\n<to attr=\"Hello World\">Tove</to>\n<from>Jani</from>\n<heading>Reminder</heading>\n<body>Don't forget me this weekend!</body>\n</note>");
     CXMLReader Reader(Source);
     SXMLEntity Entity;
+
     EXPECT_TRUE(Reader.ReadEntity(Entity));
     EXPECT_EQ(Entity.DNameData, "note");
     EXPECT_EQ(Entity.DType, SXMLEntity::EType::StartElement);
+
+    EXPECT_TRUE(Reader.ReadEntity(Entity));
+    EXPECT_EQ(Entity.DNameData, "\n");
+    EXPECT_EQ(Entity.DType, SXMLEntity::EType::CharData);
 
     EXPECT_TRUE(Reader.ReadEntity(Entity));
     EXPECT_EQ(Entity.DNameData, "to");
@@ -71,15 +76,56 @@ TEST(XMLReaderTest, MultipleLineXML) {
     EXPECT_EQ(Entity.DNameData, "to");
     EXPECT_EQ(Entity.DType, SXMLEntity::EType::EndElement);
 
-    EXPECT_TRUE(Reader.ReadEntity(Entity)); // <from>
-    EXPECT_TRUE(Reader.ReadEntity(Entity)); // Jani
-    EXPECT_TRUE(Reader.ReadEntity(Entity)); // </from>
-    EXPECT_TRUE(Reader.ReadEntity(Entity)); // <heading>
-    EXPECT_TRUE(Reader.ReadEntity(Entity)); // Reminder
-    EXPECT_TRUE(Reader.ReadEntity(Entity)); // </heading>
-    EXPECT_TRUE(Reader.ReadEntity(Entity)); // <body>
-    EXPECT_TRUE(Reader.ReadEntity(Entity)); // Don't forget me this weekend!
-    EXPECT_TRUE(Reader.ReadEntity(Entity)); // </body>
+    EXPECT_TRUE(Reader.ReadEntity(Entity));
+    EXPECT_EQ(Entity.DNameData, "\n");
+    EXPECT_EQ(Entity.DType, SXMLEntity::EType::CharData);
+
+    EXPECT_TRUE(Reader.ReadEntity(Entity));
+    EXPECT_EQ(Entity.DNameData, "from");
+    EXPECT_EQ(Entity.DType, SXMLEntity::EType::StartElement);
+
+    EXPECT_TRUE(Reader.ReadEntity(Entity));
+    EXPECT_EQ(Entity.DNameData, "Jani");
+    EXPECT_EQ(Entity.DType, SXMLEntity::EType::CharData);
+
+    EXPECT_TRUE(Reader.ReadEntity(Entity));
+    EXPECT_EQ(Entity.DNameData, "from");
+    EXPECT_EQ(Entity.DType, SXMLEntity::EType::EndElement);
+ EXPECT_TRUE(Reader.ReadEntity(Entity));
+    EXPECT_EQ(Entity.DNameData, "\n");
+    EXPECT_EQ(Entity.DType, SXMLEntity::EType::CharData);
+
+    EXPECT_TRUE(Reader.ReadEntity(Entity));
+    EXPECT_EQ(Entity.DNameData, "heading");
+    EXPECT_EQ(Entity.DType, SXMLEntity::EType::StartElement);
+
+    EXPECT_TRUE(Reader.ReadEntity(Entity));
+    EXPECT_EQ(Entity.DNameData, "Reminder");
+    EXPECT_EQ(Entity.DType, SXMLEntity::EType::CharData);
+
+    EXPECT_TRUE(Reader.ReadEntity(Entity));
+    EXPECT_EQ(Entity.DNameData, "heading");
+    EXPECT_EQ(Entity.DType, SXMLEntity::EType::EndElement);
+
+    EXPECT_TRUE(Reader.ReadEntity(Entity));
+    EXPECT_EQ(Entity.DNameData, "\n");
+    EXPECT_EQ(Entity.DType, SXMLEntity::EType::CharData);
+
+    EXPECT_TRUE(Reader.ReadEntity(Entity));
+    EXPECT_EQ(Entity.DNameData, "body");
+    EXPECT_EQ(Entity.DType, SXMLEntity::EType::StartElement);
+
+    EXPECT_TRUE(Reader.ReadEntity(Entity));
+    EXPECT_EQ(Entity.DNameData, "Don't forget me this weekend!");
+    EXPECT_EQ(Entity.DType, SXMLEntity::EType::CharData);
+
+    EXPECT_TRUE(Reader.ReadEntity(Entity));
+    EXPECT_EQ(Entity.DNameData, "body");
+    EXPECT_EQ(Entity.DType, SXMLEntity::EType::EndElement);
+
+    EXPECT_TRUE(Reader.ReadEntity(Entity));
+    EXPECT_EQ(Entity.DNameData, "\n");
+    EXPECT_EQ(Entity.DType, SXMLEntity::EType::CharData);
     
     EXPECT_TRUE(Reader.ReadEntity(Entity));
     EXPECT_EQ(Entity.DNameData, "note");
@@ -87,14 +133,24 @@ TEST(XMLReaderTest, MultipleLineXML) {
 }
 
 TEST(XMLReaderTest, ComplexAttribute) {
-    auto Source = std::make_shared<CStringDataSource>("<from gender=\"female & asexual\">Jani</from>");
+    auto Source = std::make_shared<CStringDataSource>("<from gender=\"femaleasexual\">Jani</from>");
     CXMLReader Reader(Source);
     SXMLEntity Entity;
 
     EXPECT_TRUE(Reader.ReadEntity(Entity));
     EXPECT_EQ(Entity.DNameData, "from");
     EXPECT_EQ(Entity.DType, SXMLEntity::EType::StartElement);
-    EXPECT_EQ(Entity.AttributeValue("gender"), "female & asexual");
+    EXPECT_EQ(Entity.AttributeValue("gender"), "femaleasexual");
+
+    EXPECT_TRUE(Reader.ReadEntity(Entity));
+    EXPECT_EQ(Entity.DNameData, "Jani");
+    EXPECT_EQ(Entity.DType, SXMLEntity::EType::CharData);
+
+    EXPECT_TRUE(Reader.ReadEntity(Entity));
+    EXPECT_EQ(Entity.DNameData, "from");
+    EXPECT_EQ(Entity.DType, SXMLEntity::EType::EndElement);
+    EXPECT_FALSE(Reader.ReadEntity(Entity));
+
 }
 
 // XML WRITER ----------------------------------------------------------------------------------------------------------------------------------------------------------------
