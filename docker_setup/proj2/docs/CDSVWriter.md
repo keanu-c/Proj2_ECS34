@@ -30,7 +30,7 @@ class CDSVWriter{
 
 ### Parameters
 `(const std::vector<std::string> &row)`: vector of strings to be combined into a string separated by a delimiter.
-- 
+
 ### Return value
 `True` if row has been successfully written.
 `False` otherwise.
