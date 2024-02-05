@@ -30,11 +30,9 @@ struct CXMLReader::SImplementation {
         DEntityQueue.push(TempEntity);
     }
     void CharacterElementHandler(const std::string &cdata) {
-        // might want to update the back entity to see if it is a character data
-        // CHATGPT
+        // Update the back entity to see if it is a character data
         if (!DEntityQueue.empty() && DEntityQueue.back().DType == SXMLEntity::EType::CharData) {
-            // Update the back entity if needed
-            DEntityQueue.back().DNameData += cdata;
+            DEntityQueue.back().DNameData = DEntityQueue.back().DNameData + cdata;
         } else {
             SXMLEntity TempEntity;
             TempEntity.DNameData = cdata;
@@ -73,6 +71,7 @@ struct CXMLReader::SImplementation {
         XML_SetCharacterDataHandler(DXMLParser, ChatacterDataHandlerCallback);
         XML_SetUserData(DXMLParser, this);
     };
+    // Returns true if we've reached end of data source
     bool End() const {
         if(DEntityQueue.empty() && DDataSource->End()) {
             return true;
