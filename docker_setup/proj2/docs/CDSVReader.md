@@ -61,8 +61,8 @@ int main ()
     Reader.ReadRow(output); // True
     if (Reader.End()) { // True
     std::cout << output.size() << std::endl; // 2
-    std::cout << output[0] << std::endl; // Hello
-    std::cout << output[1] << std::endl; // World
+    std::cout << output[0] << std::endl; // "Hello"
+    std::cout << output[1] << std::endl; // "World"
     }
 }
 ```

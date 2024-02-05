@@ -65,7 +65,7 @@ int main ()
     Writer.WriteEntity({SXMLEntity::EType::CharData, "no", {}});
     Writer.Flush();
 
-    std::cout << OutputStream->String() << std::endl; // <hello>world<bye><yes>no</yes></bye></hello>
+    std::cout << OutputStream->String() << std::endl; // "<hello>world<bye><yes>no</yes></bye></hello>"
 }
 
 
@@ -82,6 +82,6 @@ int main ()
     Writer.WriteEntity({SXMLEntity::EType::StartElement, "hello", {}});
     Writer.WriteEntity({SXMLEntity::EType::EndElement, "hello", {}});
 
-    std::cout << OutputStream->String() << std::endl; // <hello></hello>
+    std::cout << OutputStream->String() << std::endl; // "<hello></hello>"
 }
 ```

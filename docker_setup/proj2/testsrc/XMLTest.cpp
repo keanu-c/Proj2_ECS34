@@ -21,7 +21,7 @@ TEST(XMLReaderTest, SimpleXML) {
     EXPECT_TRUE(Reader.ReadEntity(Entity));
     EXPECT_EQ(Entity.DNameData, "heading");
     EXPECT_EQ(Entity.DType, SXMLEntity::EType::EndElement);
-
+    EXPECT_TRUE(Reader.End());
     EXPECT_FALSE(Reader.ReadEntity(Entity));
 }
 
