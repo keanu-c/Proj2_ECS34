@@ -16,7 +16,8 @@ Student 2: Christopher Lee (920724149)
 * Implement CDSVWriter class, Used Christopher Lee's StringUtils::Replace()
 * Implement CDSVReader class
 * Implement CXMLWriter class
-
+* Implement CXMLReader class
+* Write documentation for all classes
 
 ## Known Issues
 1. Makefile issue
